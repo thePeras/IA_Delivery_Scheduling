@@ -21,7 +21,43 @@ The application to be developed should have an appropriate visualization in text
 You should **allow the selection and parameterization of the algorithms** and the selection of the instance of the problem to be solved.
 
 ## Problem to be solved: Delivery Scheduling
-To be written...
+Delivery scenario where packages of three types must be transported from a starting point (0, 0) to various delivery locations. Each package type incurs different costs and penalties during transportation.
+
+### Packages types
+1. Fragile packages: Have a chance of damage during transportation.
+2. Normal packages: No risk of damage during transportation.
+3. Urgent packages: Incur a penalty for delivery outside the expected time.
+
+
+### Objective
+Design an algorithm to optimize the delivery order of packages, considering the following criteria
+
+1. Minimize Fragile Damage
+2. Minimize Travel Costs
+3. Adhere to Urgent Delivery Constraints:
+
+### Constraints
+1. You only have one vehicle available.
+2. The delivery locations are speciﬁed by their coordinates.
+3. Routes between all delivery coordinates are available.
+4. The driver drives at 60km per hour and takes 0 seconds to deliver the goods.
+5. The cost per km is C=0.3.
+
+### Objective Function
+Minimize the total cost, considering fragile damage, travel costs, and urgent delivery
+penalties.
+
+### Input
+Package information, including type (fragile, normal, urgent) and coordinates of
+delivery locations.
+
+### Output
+Optimized delivery order that minimizes the total cost.
+
+### Evaluation criteria
+- Total cost: Your algorithm should provide the deliveries at the lowest cost possible.
+- Reputation: Your algorithm should ensure deliveries on time and minimize package
+breaks to keep the reputation of the delivery company intact.
 
 
 # Deliverables
