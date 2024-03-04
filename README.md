@@ -91,4 +91,10 @@ Based on the submitted presentation, the students must carry out a demonstration
 
 
 # Roadmap 
-To be defined...
+
+1. [ ] Formular o problema e especificar os algoritmos a serem implementados.
+2. [ ] Dar setup às estruturas de dados e ambiente de desenvolvimento.
+2. [ ] Hill-climbing
+3. [ ] Simulated annealing
+4. [ ] Tabu search
+5. [ ] Genetic algorithms
