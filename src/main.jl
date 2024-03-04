@@ -1,5 +1,5 @@
-#i have a module IART_algorithms in algorithms/
-module start
+
+using Distributions
 
 include("models.jl")
 include("algorithms/hill_climbing.jl")
@@ -26,5 +26,3 @@ function main()
 end
 
 main()
-
-end

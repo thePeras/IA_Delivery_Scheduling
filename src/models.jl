@@ -7,17 +7,6 @@ mutable struct Veichle
     coordinates_y::Float64
 end
 
-mutable struct State
-    veichle::Veichle
-    remaining_packages::Dict{Int, Package}
-    delivered_packages::Dict{Int, Package}
-    broken_packages::Dict{Int, Package}
-
-    function State(remaining_packages::Dict{Int, Package})
-        new(Veichle(0, 0), remaining_packages, Dict{Int, Package}(), Dict{Int, Package}())
-    end
-end
-
 struct Package
     id::Int
     type::String
@@ -39,6 +28,17 @@ struct Package
         else
             new(id, type, coordinates_x, coordinates_y, nothing, nothing, nothing)
         end
+    end
+end
+
+mutable struct State
+    veichle::Veichle
+    remaining_packages::Dict{Int, Package}
+    delivered_packages::Dict{Int, Package}
+    broken_packages::Dict{Int, Package}
+
+    function State(remaining_packages::Dict{Int, Package})
+        new(Veichle(0, 0), remaining_packages, Dict{Int, Package}(), Dict{Int, Package}())
     end
 end
 
