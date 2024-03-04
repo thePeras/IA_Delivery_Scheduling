@@ -1,4 +1,3 @@
-
 using Distributions
 
 include("models.jl")
@@ -17,12 +16,17 @@ function generate_package_stream(num_packages, map_size)
 end
 
 function main()
-    num_packages = 15
+    num_packages = 100
     map_size = 60
     velocity = 60 # 60 km/h
-    state = State(generate_package_stream(num_packages, map_size))
 
-    best_solution = hill_climbing()
+    packages_stream = generate_package_stream(num_packages, map_size)
+    state = State(packages_stream, velocity)
+
+    current_state = hill_climbing(state)
+    current_state2 = hill_climbing(state)
+    println(current_state.total_time)
+    println(current_state2.total_time)
 end
 
 main()

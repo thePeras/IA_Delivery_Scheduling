@@ -5,6 +5,7 @@ using Distributions
 mutable struct Veichle
     coordinates_x::Float64
     coordinates_y::Float64
+    velocity::Int64
 end
 
 struct Package
@@ -36,34 +37,39 @@ mutable struct State
     remaining_packages::Dict{Int, Package}
     delivered_packages::Dict{Int, Package}
     broken_packages::Dict{Int, Package}
+    late_packages::Int
 
-    function State(remaining_packages::Dict{Int, Package})
-        new(Veichle(0, 0), remaining_packages, Dict{Int, Package}(), Dict{Int, Package}())
+    total_distance::Float64
+    total_time::Float64
+
+    broken_package_cost::Float64
+
+    function State(remaining_packages::Dict{Int64, Package}, velocity::Int64)
+        new(Veichle(0, 0, velocity), remaining_packages, Dict{Int, Package}(), Dict{Int, Package}(), 0, 0, 0, 0)
     end
 end
 
 # (State, Package) -> Bool
-function next_state!(state::State, next_package::Package)
+function next_state!(state::State, selected_package::Package)
     # If next_package is fragile, calculate the probability of breaking
-    package_distance = sqrt((state.veichle.coordinates_x - next_package.coordinates_x)^2 + (state.veichle.coordinates_y - next_package.coordinates_y)^2)
+    package_distance = sqrt((state.veichle.coordinates_x - selected_package.coordinates_x)^2 + (state.veichle.coordinates_y - selected_package.coordinates_y)^2)
     state.total_distance += package_distance
-    state.veichle.coordinates_x = next_package.coordinates_x
-    state.veichle.coordinates_y = next_package.coordinates_y
+    state.total_time += (package_distance * 60) / state.veichle.velocity
+    state.veichle.coordinates_x = selected_package.coordinates_x
+    state.veichle.coordinates_y = selected_package.coordinates_y
 
-    # remove package from remaining_packages
-
-    if next_package.type == "fragile"
-        p_broken = 1 - ((1 - next_package.breaking_chance) ^ distance_covered)
+    if selected_package.type == "fragile"
+        p_broken = 1 - ((1 - selected_package.breaking_chance) ^ state.total_distance)
         if rand(Uniform(0, 1)) < p_broken
-            state.broken_packages[next_package.id] = next_package
-            delete!(state.remaining_packages, next_package.id)
+            state.broken_packages[selected_package.id] = selected_package
+            delete!(state.remaining_packages, selected_package.id)
+            state.broken_package_cost += selected_package.breaking_cost
             return false
         end
     end
 
-    # Remove next_package from remaining_packages
-    state.delivered_packages[next_package.id] = next_package
-    delete!(state.remaining_packages, next_package.id)
+    state.delivered_packages[selected_package.id] = selected_package
+    delete!(state.remaining_packages, selected_package.id)
     return true
 end
 
