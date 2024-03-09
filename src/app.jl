@@ -11,7 +11,7 @@ app.layout = html_div() do
             data = [
                 (x = ["giraffes", "orangutans", "monkeys"], y = [20, 14, 23], type = "bar", name = "SF"),
                 (x = ["giraffes", "orangutans", "monkeys"], y = [12, 18, 29], type = "bar", name = "Montreal"),
-                (x = ["chimps", "orangutans", "monkeys"], y = [27, 2, 13], type = "bar", name = "Montreal"),
+                (x = ["chimps", "orangutans", "monkeys"], y = [27, 2, 13], type = "bar", name = "Lol "),
             ],
             layout = (title = "Dash Data Visualization", barmode="group")
         )
