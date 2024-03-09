@@ -5,6 +5,7 @@ using Distributions
 mutable struct Veichle
     coordinates_x::Float64
     coordinates_y::Float64
+    velocity::Int64
 end
 
 struct Package
@@ -32,41 +33,51 @@ struct Package
 end
 
 mutable struct State
-    veichle::Veichle
-    remaining_packages::Dict{Int, Package}
-    delivered_packages::Dict{Int, Package}
-    broken_packages::Dict{Int, Package}
+    packages_stream::Array{Package, 1}
 
-    function State(remaining_packages::Dict{Int, Package})
-        new(Veichle(0, 0), remaining_packages, Dict{Int, Package}(), Dict{Int, Package}())
-    end
-end
+    total_distance::Float64
+    total_time::Float64
+    total_late_minutes::Float64
+    
+    broken_packages::Array{Package, 1}
+    broken_packages_cost::Float64
 
-# (State, Package) -> Bool
-function next_state!(state::State, next_package::Package)
-    # If next_package is fragile, calculate the probability of breaking
-    package_distance = sqrt((state.veichle.coordinates_x - next_package.coordinates_x)^2 + (state.veichle.coordinates_y - next_package.coordinates_y)^2)
-    state.total_distance += package_distance
-    state.veichle.coordinates_x = next_package.coordinates_x
-    state.veichle.coordinates_y = next_package.coordinates_y
+    veichle_velocity::Int64
 
-    # remove package from remaining_packages
+    function State(packages_stream::Array{Package, 1}, veichle::Veichle);
+        total_distance = 0
+        total_time = 0
+        total_late_minutes = 0
+        broken_packages = []
+        broken_packages_cost = 0
 
-    if next_package.type == "fragile"
-        p_broken = 1 - ((1 - next_package.breaking_chance) ^ distance_covered)
-        if rand(Uniform(0, 1)) < p_broken
-            state.broken_packages[next_package.id] = next_package
-            delete!(state.remaining_packages, next_package.id)
-            return false
+        for package in packages_stream
+            distance = sqrt((veichle.coordinates_x - package.coordinates_x)^2 + (veichle.coordinates_y - package.coordinates_y)^2)
+            total_distance += distance
+            total_time += (distance * 60) / veichle.velocity
+            veichle.coordinates_x = package.coordinates_x
+            veichle.coordinates_y = package.coordinates_y
+
+            if package.type == "fragile"
+                p_broken = 1 - ((1 - package.breaking_chance) ^ total_distance)
+                if rand(Uniform(0, 1)) < p_broken
+                    push!(broken_packages, package)
+                    broken_packages_cost += package.breaking_cost
+                end
+            end
+
+            if package.type == "urgent"
+                late_minutes = total_time - package.delivery_time
+                if late_minutes > 0
+                    total_late_minutes += late_minutes
+                end
+            end
         end
-    end
 
-    # Remove next_package from remaining_packages
-    state.delivered_packages[next_package.id] = next_package
-    delete!(state.remaining_packages, next_package.id)
-    return true
+        return new(packages_stream, total_distance, total_time, total_late_minutes, broken_packages, broken_packages_cost, veichle.velocity)
+    end
 end
 
-export State, Package, next_state!
+export State, Package
 
 end
