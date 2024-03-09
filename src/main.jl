@@ -1,9 +1,12 @@
 using Distributions
 
+include("menu.jl")
 include("models.jl")
 include("algorithms/hill_climbing.jl")
+include("algorithms/simulated_annealing.jl")
 
 using .Models: State, Package, Veichle
+using .Menu: choose_menu
 
 function generate_package_stream(num_packages, map_size)
     types = ["fragile", "normal", "urgent"]
@@ -23,7 +26,15 @@ function main()
     packages_stream = generate_package_stream(num_packages, map_size)
     state::State = State(packages_stream, Veichle(0, 0, velocity))
 
-    current_state = hill_climbing(state)
+    choice = choose_menu()
+    algorithm, iterations = choice
+
+    if algorithm == "Hill Climbing"
+        current_state = hill_climbing(state, iterations)
+    elseif algorithm == "Simulated Annealing"
+        current_state = simulated_annealing(state, max_iterations=iterations)
+    end
+
     println(current_state.total_time)
 end
 
