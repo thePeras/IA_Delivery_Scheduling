@@ -9,7 +9,7 @@
 
     <link rel="stylesheet" href="dist/reset.css">
     <link rel="stylesheet" href="dist/reveal.css">
-    <link rel="stylesheet" href="dist/theme/black.css">
+    <link rel="stylesheet" href="dist/theme/blood.css">
 
     <!-- Theme used for syntax highlighted code -->
     <link rel="stylesheet" href="plugin/highlight/monokai.css">
@@ -18,6 +18,7 @@
 <body>
     <div class="reveal">
         <div class="slides">
+            <!-- Cover -->
             <section>
                 <h1>Delivery Scheduling</h1>
                 <div style="display: flex; justify-content: center; gap: 2em; align-items: center;">
@@ -29,6 +30,7 @@
                     </ul>
                 </div>
             </section>
+            <!-- Work specification -->
             <section>
                 <section>
                     <h3>Scenario</h3>
@@ -62,8 +64,164 @@
                     </ol>
                 </section>
             </section>
+            <!-- Work references -->
             <section>
-                
+                <section>
+                    <h3>Related work and References</h3>
+                    <ul>
+                        <li>
+                            Hill Climbing
+                            <a href="https://www.youtube.com/watch?v=oSdPmxRCWws">[1]</a>
+                        </li>
+                        <li>
+                            Simulated Annealing
+                            <a href="https://www.youtube.com/watch?v=FyyVbuLZav8&t=302s&ab_channel=OptiHealthClub">[1]</a>
+                            <a href="https://medium.com/@francis.allanah/travelling-salesman-problem-using-simulated-annealing-f547a71ab3c6">[2]</a>
+                            <a href="https://www.youtube.com/watch?v=eBmU1ONJ-os">[3]</a>
+                        </li>
+                        <li>
+                            Tabu search
+                            <a href="https://www.youtube.com/watch?v=tIDhFPhrCbU&t=270s">[1]</a>
+                            <a href="https://www.youtube.com/watch?v=saNk8h2KuVE">[2]</a>
+                            <a href="https://www.juliawiki.com/wiki/Tabu_Search">[3]</a>
+                        </li>
+                        <li>
+                            Genetic Algorithm
+                            <a href="https://www.youtube.com/playlist?list=PLRqwX-V7Uu6bw4n02JP28QDuUdNi3EXxJ">[1]</a>
+                        </li>
+                    </ul>
+                </section>
+            </section>
+            <!-- Problem formulation -->
+            <section>
+                <section>
+                    <h4>State Representaton && Initial State</h4>
+                    <p>
+                        A state consists of the following components:
+                        <ul>
+                            <li>Current location of the vehicle</li>
+                            <li>Remaining undelivered packages</li>
+                            <li>Delivery status of each package (delivered or not)</li>
+                        </ul>
+                    </p>
+                </section>
+                <section>
+                    <h4>Actions</h4>
+                    <ul>
+                        <li>Select the next package to deliver</li>
+                        <li>Move the vehicle to the selected package's location</li>
+                    </ul>
+                    <hr />
+                    <h4>Transition Model</h4>
+                    <p>
+                        When an action is taken to select and deliver a package, update the state by removing the delivered
+                        package from the list of undelivered packages and updating the vehicle's location.
+                    </p>
+                </section>
+                <section>
+                    <h4>Goal Test</h4>
+                    <p>
+                        Check if all packages have been delivered.
+                    </p>
+                    <hr />
+                    <h4>Cost Function</h4>
+                    <ul>
+                        <li>Consider the cost of traveling between locations (distance * cost per km)</li>
+                        <li>Add penalties for delayed delivery of urgent packages (if any)</li>
+                        <li>Consider the cost of package damage during transportation</li>
+                    </ul>
+                </section>
+            </section>
+            <section>
+                <section>
+                    <h1 class="r-fit-text">Heuristics</h1>
+                </section>
+                <section>
+                    <h3>Hill Climbing</h3>
+                    <p>
+                        Hill Climbing is a heuristic search used for mathematical optimization problems. 
+                        It is an iterative algorithm that starts with an arbitrary solution to a problem, 
+                        then attempts to find a better solution by incrementally changing a single element of the solution. 
+                        If the change produces a better solution, an incremental change is made to the new solution, 
+                        repeating until no further improvements can be found.
+                    </p>
+                </section>
+                <section>
+                    <h3>Simulated Annealing</h3>
+                    <p>
+                        Simulated annealing is a probabilistic technique used for finding an approximate solution to an optimization problem. 
+                        It is a probabilistic algorithm that relies on randomization to escape local optima. 
+                        The algorithm is based on the analogy of the physical process of annealing, 
+                        a technique used to reduce defects in materials.
+                    </p>
+                </section>
+                <section>
+                    <h3>Tabu Search</h3>
+                    <p>
+                        Tabu search is a metaheuristic search method employing local search methods used for mathematical optimization. 
+                        Local search methods are used to move from one solution to a neighboring solution. 
+                        The algorithm uses a memory structure to store solutions that have been visited, 
+                        and these are used to avoid revisiting the same solution.
+                    </p>
+                </section>
+                <section>
+                    <h3>Genetic Algorithm</h3>
+                    <p>
+                        Genetic algorithms are a class of optimization algorithms which are based on the principles of natural selection. 
+                        They are used to find approximate solutions to optimization and search problems. 
+                        The algorithm reflects the process of natural selection where the fittest individuals are selected for reproduction in order to produce offspring of the next generation.
+                    </p>
+                </section>
+            </section>
+            <!-- Implementation -->
+            <section>
+                <section>
+                    <h3>Programming Language</h3>
+                    <p>
+                        Julia is a high-level programming language for technical computing. 
+                        It's syntax is similar to Python making it easy to learn. 
+                        It is also know for its high-performance 
+                        <sup><a href="https://julialang.org/benchmarks/">(i)</a></sup>
+                        and for the vast ammount of compatible libraries.
+                        Another strong aspect about Julia lies in its accessible support for parallelism, 
+                        which significantly enhances its efficiency, especially for optimization 
+                        problems such as the one we are currently tackling.
+                    </p>
+                </section>
+                <section>
+                    <h3>Data Structures</h3>
+                    <pre><code data-trim data-noescape class="language-julia language-jl">
+mutable struct Veichle
+    coordinates_x::Float64
+    coordinates_y::Float64
+    velocity::Int64
+end
+
+struct Package
+    id::Int
+    type::String
+    coordinates_x::Float64
+    coordinates_y::Float64
+
+    breaking_chance::Union{Float64, Nothing}
+    breaking_cost::Union{Float64, Nothing}
+    delivery_time::Union{Float64, Nothing}
+
+    function Package(id::Int, type::String, coordinates_x::Float64, coordinates_y::Float64)
+        if type == "fragile"
+            breaking_chance = rand(Uniform(0.0001, 0.01))
+            breaking_cost = rand(Uniform(3, 10))
+            new(id, type, coordinates_x, coordinates_y, breaking_chance, breaking_cost, nothing)
+        elseif type == "urgent"
+            delivery_time = rand(Uniform(100, 240))
+            new(id, type, coordinates_x, coordinates_y, nothing, nothing, delivery_time)
+        else
+            new(id, type, coordinates_x, coordinates_y, nothing, nothing, nothing)
+        end
+    end
+end
+                    </code></pre>
+                </section>
             </section>
         </div>
     </div>
@@ -84,22 +242,5 @@
         });
     </script>
 </body>
-<!--
-State: A state consists of the following components:
-Current location of the vehicle
-Remaining undelivered packages
-Delivery status of each package (delivered or not)
-Actions:
-Select the next package to deliver
-Move the vehicle to the selected package's location
-Transition Model:
-When an action is taken to select and deliver a package, update the state by removing the delivered package from the list of undelivered packages and updating the vehicle's location.
-Goal Test:
-Check if all packages have been delivered.
-Cost Function:
-Consider the cost of traveling between locations (distance * cost per km)
-Add penalties for delayed delivery of urgent packages (if any)
-Consider the cost of package damage during transportation
--->
 
 </html>
