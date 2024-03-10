@@ -26,7 +26,7 @@
                     <ul style="list-style-type: none; text-align: center; margin: 0;">
                         <li>Adriano Machado</li>
                         <li>Diogo Fernandes</li>
-                        <li>João Pereira</li>
+                        <li>João Torre Pereira</li>
                     </ul>
                 </div>
             </section>
@@ -46,11 +46,11 @@
                     <p>
                         Design an algorithm to optimize the delivery order of packages, considering the
                         following criteria:
-                        <ol>
-                            <li>Minimize Fragile Damage</li>
-                            <li>Minimize Travel Costs</li>
-                            <li>Adhere to Urgent Delivery Constraints</li>
-                        </ol>
+                    <ol>
+                        <li>Minimize Fragile Damage</li>
+                        <li>Minimize Travel Costs</li>
+                        <li>Adhere to Urgent Delivery Constraints</li>
+                    </ol>
                     </p>
                 </section>
                 <section>
@@ -75,8 +75,10 @@
                         </li>
                         <li>
                             Simulated Annealing
-                            <a href="https://www.youtube.com/watch?v=FyyVbuLZav8&t=302s&ab_channel=OptiHealthClub">[1]</a>
-                            <a href="https://medium.com/@francis.allanah/travelling-salesman-problem-using-simulated-annealing-f547a71ab3c6">[2]</a>
+                            <a
+                                href="https://www.youtube.com/watch?v=FyyVbuLZav8&t=302s&ab_channel=OptiHealthClub">[1]</a>
+                            <a
+                                href="https://medium.com/@francis.allanah/travelling-salesman-problem-using-simulated-annealing-f547a71ab3c6">[2]</a>
                             <a href="https://www.youtube.com/watch?v=eBmU1ONJ-os">[3]</a>
                         </li>
                         <li>
@@ -95,41 +97,49 @@
             <!-- Problem formulation -->
             <section>
                 <section>
-                    <h4>State Representaton && Initial State</h4>
-                    <p>
-                        A state consists of the following components:
-                        <ul>
-                            <li>Current location of the vehicle</li>
-                            <li>Remaining undelivered packages</li>
-                            <li>Delivery status of each package (delivered or not)</li>
-                        </ul>
-                    </p>
+                    <h4>State Representaton</h4>
+                    <p>The state consists in a list of packages (package_stream) where the first element is the first
+                        package to be delivered and so on.</p>
+                    <p>All the necessary information is stored in the state, on is instantiation:</p>
+                    <ul>
+                        <li>Total Distance Traveled</li>
+                        <li>Total Time Traveled</li>
+                        <li>Total Late Minutes of the urgent packages</li>
+                        <li>The Broken Packages</li>
+                        <li>The Total Cost of the Broken Packages</li>
+                    </ul>
                 </section>
                 <section>
                     <h4>Actions</h4>
                     <ul>
-                        <li>Select the next package to deliver</li>
-                        <li>Move the vehicle to the selected package's location</li>
+                        <li>Modify the order of the packages</li>
                     </ul>
                     <hr />
                     <h4>Transition Model</h4>
                     <p>
-                        When an action is taken to select and deliver a package, update the state by removing the delivered
-                        package from the list of undelivered packages and updating the vehicle's location.
+                        Instantiates a new state with the new package_stream and the vehicle's properties.
                     </p>
-                </section>
-                <section>
+                    <hr />
                     <h4>Goal Test</h4>
                     <p>
                         Check if all packages have been delivered.
                     </p>
-                    <hr />
+                </section>
+                <section>
                     <h4>Cost Function</h4>
                     <ul>
-                        <li>Consider the cost of traveling between locations (distance * cost per km)</li>
-                        <li>Add penalties for delayed delivery of urgent packages (if any)</li>
-                        <li>Consider the cost of package damage during transportation</li>
+                        <li>Cost of traveling between locations (distance * cost per km)</li>
+                        <li>Delayed delivery of urgent packages penalties</li>
+                        <li>Cost of packages damage during transportation</li>
                     </ul>
+                    <pre><code data-trim data-noescape class="language-julia language-jl">
+                    function fitness(state::State)
+                        C = 0.3
+                        distance_cost = C * state.total_distance
+                        urgent_cost = C * state.total_late_minutes
+                        return distance_cost + state.broken_packages_cost + urgent_cost
+                    end
+                    </code></pre>
                 </section>
             </section>
             <section>
@@ -138,38 +148,39 @@
                 </section>
                 <section>
                     <h3>Hill Climbing</h3>
-                    <p>
-                        Hill Climbing is a heuristic search used for mathematical optimization problems. 
-                        It is an iterative algorithm that starts with an arbitrary solution to a problem, 
-                        then attempts to find a better solution by incrementally changing a single element of the solution. 
-                        If the change produces a better solution, an incremental change is made to the new solution, 
-                        repeating until no further improvements can be found.
+                    <p>With this algorithm we will start by a random order of the packages and then try to improve
+                        it by swapping the order of two random packages.
+                        If the swap improves the state, we keep it, otherwise we discard it.</p>
+                    <p>We swap the packages until we can't improve the state by a given number of iterations.</p>
+                    <p>The algorithm is not guaranteed to find the best solution, but it is guaranteed to find a local
+                        optimum.
                     </p>
                 </section>
                 <section>
                     <h3>Simulated Annealing</h3>
                     <p>
-                        Simulated annealing is a probabilistic technique used for finding an approximate solution to an optimization problem. 
-                        It is a probabilistic algorithm that relies on randomization to escape local optima. 
-                        The algorithm is based on the analogy of the physical process of annealing, 
-                        a technique used to reduce defects in materials.
+                        Based on the analogy of the physical process of annealing in this algorithm we start with a 
+                        random order of the packages and then try to improve it by accepting worse solutions with a
+                        probability that decreases over time (Temperature variable). With this aproach we
+                        should be able to escape local optima.
                     </p>
                 </section>
                 <section>
                     <h3>Tabu Search</h3>
                     <p>
-                        Tabu search is a metaheuristic search method employing local search methods used for mathematical optimization. 
-                        Local search methods are used to move from one solution to a neighboring solution. 
-                        The algorithm uses a memory structure to store solutions that have been visited, 
+                        Tabu search is a metaheuristic search method employing local search methods used for
+                        mathematical optimization.
+                        Local search methods are used to move from one solution to a neighboring solution.
+                        The algorithm uses a memory structure to store solutions that have been visited,
                         and these are used to avoid revisiting the same solution.
                     </p>
                 </section>
                 <section>
                     <h3>Genetic Algorithm</h3>
                     <p>
-                        Genetic algorithms are a class of optimization algorithms which are based on the principles of natural selection. 
-                        They are used to find approximate solutions to optimization and search problems. 
-                        The algorithm reflects the process of natural selection where the fittest individuals are selected for reproduction in order to produce offspring of the next generation.
+                        Inspired by the process of natural selection, we will have the concept of a population
+                        of solutions, and we will evolve it by applying genetic operators such as mutation and
+                        crossover. In this case, our package_stream can be seen as the genome of the individuals.
                     </p>
                 </section>
             </section>
@@ -178,13 +189,13 @@
                 <section>
                     <h3>Programming Language</h3>
                     <p>
-                        Julia is a high-level programming language for technical computing. 
-                        It's syntax is similar to Python making it easy to learn. 
-                        It is also know for its high-performance 
+                        Julia is a high-level programming language for technical computing.
+                        It's syntax is similar to Python making it easy to learn.
+                        It is also know for its high-performance
                         <sup><a href="https://julialang.org/benchmarks/">(i)</a></sup>
                         and for the vast ammount of compatible libraries.
-                        Another strong aspect about Julia lies in its accessible support for parallelism, 
-                        which significantly enhances its efficiency, especially for optimization 
+                        Another strong aspect about Julia lies in its accessible support for parallelism,
+                        which significantly enhances its efficiency, especially for optimization
                         problems such as the one we are currently tackling.
                     </p>
                 </section>
@@ -218,6 +229,52 @@ struct Package
         else
             new(id, type, coordinates_x, coordinates_y, nothing, nothing, nothing)
         end
+    end
+end
+
+mutable struct State
+    packages_stream::Array{Package, 1}
+
+    total_distance::Float64
+    total_time::Float64
+    total_late_minutes::Float64
+    
+    broken_packages::Array{Package, 1}
+    broken_packages_cost::Float64
+
+    veichle_velocity::Int64
+
+    function State(packages_stream::Array{Package, 1}, veichle::Veichle);
+        total_distance = 0
+        total_time = 0
+        total_late_minutes = 0
+        broken_packages = []
+        broken_packages_cost = 0
+
+        for package in packages_stream
+            distance = sqrt((veichle.coordinates_x - package.coordinates_x)^2 + (veichle.coordinates_y - package.coordinates_y)^2)
+            total_distance += distance
+            total_time += (distance * 60) / veichle.velocity
+            veichle.coordinates_x = package.coordinates_x
+            veichle.coordinates_y = package.coordinates_y
+
+            if package.type == "fragile"
+                p_broken = 1 - ((1 - package.breaking_chance) ^ total_distance)
+                if rand(Uniform(0, 1)) < p_broken
+                    push!(broken_packages, package)
+                    broken_packages_cost += package.breaking_cost
+                end
+            end
+
+            if package.type == "urgent"
+                late_minutes = total_time - package.delivery_time
+                if late_minutes > 0
+                    total_late_minutes += late_minutes
+                end
+            end
+        end
+
+        return new(packages_stream, total_distance, total_time, total_late_minutes, broken_packages, broken_packages_cost, veichle.velocity)
     end
 end
                     </code></pre>
