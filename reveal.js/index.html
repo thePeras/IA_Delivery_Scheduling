@@ -20,7 +20,7 @@
         <div class="slides">
             <!-- Cover -->
             <section>
-                <h1>Delivery Scheduling</h1>
+                <h1 class="r-fit-text">Delivery Scheduling</h1>
                 <div style="display: flex; justify-content: center; gap: 2em; align-items: center;">
                     <img src="assets/package.png" style="height: 200px;">
                     <ul style="list-style-type: none; text-align: center; margin: 0;">
@@ -148,13 +148,12 @@
                 </section>
                 <section>
                     <h3>Hill Climbing</h3>
-                    <p>With this algorithm we will start by a random order of the packages and then try to improve
-                        it by swapping the order of two random packages.
-                        If the swap improves the state, we keep it, otherwise we discard it.</p>
+                    <p>Starting with a random order of the packages, this algorithm intends to improve the state
+                        by swapping the order of two random packages, discarding changes that do not improve the
+                        state, and accepting changes otherwise.</p>
                     <p>We swap the packages until we can't improve the state by a given number of iterations.</p>
                     <p>The algorithm is not guaranteed to find the best solution, but it is guaranteed to find a local
-                        optimum.
-                    </p>
+                        optimum.</p>
                 </section>
                 <section>
                     <h3>Simulated Annealing</h3>
@@ -168,12 +167,11 @@
                 <section>
                     <h3>Tabu Search</h3>
                     <p>
-                        Tabu search is a metaheuristic search method employing local search methods used for
-                        mathematical optimization.
-                        Local search methods are used to move from one solution to a neighboring solution.
-                        The algorithm uses a memory structure to store solutions that have been visited,
-                        and these are used to avoid revisiting the same solution.
-                    </p>
+                        Tabu search is a metaheuristic search method that enhances the performance of local search
+                        by relaxing their main rule: worsening moves are not allowed. Tabu search allows moves that
+                        worsen the solution if there is no other option. It also uses a memory structure to store
+                        solutions that have been visited, and these are used to avoid revisiting the same solution.
+                    </p> 
                 </section>
                 <section>
                     <h3>Genetic Algorithm</h3>
