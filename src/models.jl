@@ -32,6 +32,10 @@ struct Package
     end
 end
 
+struct PackagesStream
+    packages::Array{Package, 1}
+end
+
 mutable struct State
     packages_stream::Array{Package, 1}
 

@@ -68,10 +68,10 @@ Each group must submit in Moodle a PDF format **brief presentation** (max 5 slid
 
 The presentation should contain:
 
-- [ ] 1. Specification of the work to be performed (definition of the optimization problem to be solved)
-- [ ] 2. Related work with references to works found in a bibliographic search (articles, web pages, and/or source code), 
-- [ ] 3. Formulation of the problem as a search problem (state representation, initial state, objective test, operators (names, preconditions, effects, and costs), heuristics/evaluation function) or optimization problem (solution representation, neighborhood/mutation and crossover functions, hard constraints, evaluation functions)
-- [ ] 4. Implementation work already carried out (programming language, development environment, data structures, among others).
+- [X] 1. Specification of the work to be performed (definition of the optimization problem to be solved)
+- [X] 2. Related work with references to works found in a bibliographic search (articles, web pages, and/or source code), 
+- [X] 3. Formulation of the problem as a search problem (state representation, initial state, objective test, operators (names, preconditions, effects, and costs), heuristics/evaluation function) or optimization problem (solution representation, neighborhood/mutation and crossover functions, hard constraints, evaluation functions)
+- [X] 4. Implementation work already carried out (programming language, development environment, data structures, among others).
 
 
 ## Final (25 March)
