@@ -3,7 +3,7 @@ module Menu
 using TerminalMenus
 
 function choose_algorithm()
-    algorithms = ["Hill Climbing", "Simulated Annealing"#=, "Tabu Search", "Genetic Algorithm"=#]
+    algorithms = ["Hill Climbing", "Simulated Annealing", "Tabu Search", "Genetic Algorithm"]
     menu = RadioMenu(algorithms)
     choice = request(menu)
     return algorithms[choice]

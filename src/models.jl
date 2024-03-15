@@ -34,10 +34,20 @@ end
 
 struct PackagesStream
     packages::Array{Package, 1}
+    size::Int64
+
+    function PackagesStream(packages::Array{Package, 1})
+        new(packages, length(packages))
+    end
 end
 
+struct Population
+    individuals::Array{State}
+end
+
+
 mutable struct State
-    packages_stream::Array{Package, 1}
+    packages_stream::Array{Package, 1} #Change this to PackagesStream
 
     total_distance::Float64
     total_time::Float64
@@ -82,6 +92,6 @@ mutable struct State
     end
 end
 
-export State, Package
+export State, Package, Population
 
 end
