@@ -1,18 +1,5 @@
 using .Models: State, Package, Veichle
 
-function fitness(state::State)
-    #=
-        1. Distance Cost: C * distance
-        2. Damage Cost: Z * n_breaked_packages // Calculated in the State constructor
-        3. Urgente Cost: C * total_late_minutes
-    =#
-    
-    C = 0.3
-    distance_cost = C * state.total_distance
-    urgent_cost = C * state.total_late_minutes
-    return distance_cost + state.broken_packages_cost + urgent_cost
-end
-
 # Should it be called hill_descend ^.^?
 function hill_climbing(state::State, max_iterations::Int64 = 100)
     current_iteration = 0
@@ -23,7 +10,7 @@ function hill_climbing(state::State, max_iterations::Int64 = 100)
         neighbor = get_neighbor(current_state)
         neighbor_fitness = fitness(neighbor)
 
-        if neighbor_fitness < best_fitness
+        if neighbor_fitness > best_fitness
             best_fitness = neighbor_fitness
             current_state = neighbor
             current_iteration = 0; # Restart the counter

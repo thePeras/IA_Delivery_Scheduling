@@ -41,11 +41,6 @@ struct PackagesStream
     end
 end
 
-struct Population
-    individuals::Array{State}
-end
-
-
 mutable struct State
     packages_stream::Array{Package, 1} #Change this to PackagesStream
 
@@ -92,6 +87,10 @@ mutable struct State
     end
 end
 
-export State, Package, Population
+struct Population
+    individuals::Array{State}
+end
+
+Base.copy(obj::Population) = Population(copy(obj.individuals))
 
 end

@@ -1,35 +1,51 @@
+using .Models: State, Veichle, Population, PackagesStream
+
+using Random
+
 function genetic_algorithm(init_population::Population, max_generations::Int64 = 100, elitism_population_size::Int64 = 20, mutation_rate::Float64 = 0.01)
 
+    veichle_vel = init_population.individuals[1].veichle_velocity
     population_size = length(init_population.individuals)
-    population = clone(init_population)
+    population = copy(init_population)
 
-    for _ in 1:max_generations
+    for i in 1:max_generations
+        println("Generation: ", i)
+
         # New Population
         new_population = []
 
         # Elitism - Copying the best individuals to the next generation without any change to help preserve the best solution.
         sorted_population = sort(population.individuals, by=fitness)
-        new_population = sorted_population[1:elitism_population_size]
+        reverse!(sorted_population)
+        for j in 1:elitism_population_size
+            push!(new_population, sorted_population[j])
+        end
 
         # Reproduction
-        for _ in 1:population_size - elitism_population_size
-            # Selection TODO: Use the choosing algorithm
-            parent1 = select_from_population(population)
-            parent2 = select_from_population(population)
+        for _ in 1:(population_size - elitism_population_size)
+            # Selection 
+            #TODO: Use the choosing algorithm
+            parents = tournament_selection(population)
+            #parents = roulette_wheel_selection(population)
+            #parents = rank_based_selection(population)
 
-            # Crossover TODO: Use the choosing algorithm
-            child = crossover(parent1, parent2)
+            # Crossover 
+            #TODO: Use the choosing algorithm
+            child = one_point_crossover(parents[1], parents[2])
 
             # Mutation
             if rand(Uniform(0, 1)) < mutation_rate
+                #TODO: Something here is adding packages because when running the alg with mutation the number of packages increases
                 mutate!(child)
             end
 
-            push!(new_population, State(child))
+            push!(new_population, State(child.packages, Veichle(0, 0, veichle_vel)))
         end
 
         population = Population(new_population)
     end
+
+    return sort(population.individuals, by=fitness, rev=true)[1]
 end
 
 #=
@@ -38,36 +54,40 @@ SELECTION FUNCTIONS
 - Tournament selection
 - Roulette wheel selection
 - Rank-based selection
+
+Our selection functions returns two diference parents. 
+This is an optimization step since we want diversity and 
+the best individuals were already copied to the next 
+generation with the elistm selection.
+
 =#
 
-# Random one
-function select_from_population(population::Population)
-    return population.individuals[rand(1:length(population.individuals))]
+# Two random parents
+function select_random_from_population(population::Population)
+    return sample(population.individuals, 2, replace=false)
 end
 
 function tournament_selection(population::Population, tournament_size::Int = 5)
-    selected_parents = []
     shuffled_population = shuffle(population.individuals)
-    for _ in 1:2 
-        tournament = sample(shuffled_population, tournament_size, replace=false)
-        winner = argmax([fitness(individual) for individual in tournament])
-        push!(selected_parents, tournament[winner])
-        # ASK: Should we remove the winner from the shuffled_population?
-    end
-    return selected_parents
+    tournament = sample(shuffled_population, tournament_size, replace=false)
+    return sort(tournament, by=fitness, rev=true)[1:2]
 end
 
-# TODO: fitness is better when is lower, so we need to modify the fitness function
+#FIX: This takes a lot
 function roulette_wheel_selection(population::Population)
-    total_fitness = sum([fitness(individual) for individual in population.individuals])
+    total_fitness = abs(sum(fitness(individual) for individual in population.individuals))
     selected_parents = []
-    for _ in 1:2  # Select 2 parents
-        r = rand() * total_fitness
+    for _ in 1:2 
+        r = rand() * total_fitness # Spinning the wheel
         cumulative_fitness = 0.0
         for individual in population.individuals
-            cumulative_fitness += fitness(individual)
+            if individual in selected_parents
+                continue
+            end
+            cumulative_fitness += abs(fitness(individual))
             if cumulative_fitness >= r
                 push!(selected_parents, individual)
+                total_fitness -= abs(fitness(individual)) # Update the total fitness because this individual will not considered anymore
                 break
             end
         end
@@ -75,15 +95,21 @@ function roulette_wheel_selection(population::Population)
     return selected_parents
 end
 
+# Fix this 
 function rank_based_selection(population::Population)
     sorted_population = sort(population.individuals, by=fitness)
     ranks = reverse(1:length(sorted_population))
-    probabilities = [r / sum(ranks) for r in ranks]
+    total_ranks = abs(sum(ranks))
+    probabilities = [abs(r) / total_ranks for r in ranks]
     selected_parents = []
+    
     for _ in 1:2  # Select 2 parents
         r = rand()
         cumulative_prob = 0.0
         for (individual, prob) in zip(sorted_population, probabilities)
+            if individual in selected_parents
+                continue
+            end
             cumulative_prob += prob
             if cumulative_prob >= r
                 push!(selected_parents, individual)
@@ -103,38 +129,20 @@ CROSSOVER FUNCTIONS
 
 =#
 
-function best_child(child1::PackagesStream, child2::PackagesStream, parent1::State, parent2::State)
-    fix_duplicates!(child1, parent1)
-    fix_duplicates!(child2, parent2)
+function one_point_crossover(parent1::State, parent2::State)
+    crossover_point = rand(1:length(parent1.packages_stream))
 
-    fitness1 = fitness(State(child1))
-    fitness2 = fitness(State(child2))
-
-    return ifelse(fitness1 > fitness2, child1, child2)
-end
-
-function fix_duplicates!(child::PackagesStream, parent::State)
-    for package in parent.packages_stream
-        if !(package in child.packages)
-            idx = findfirst(x -> x == package, child.packages)
-            child.packages[idx] = package
+    child1 = copy(parent1.packages_stream[1:crossover_point])
+    for package in parent2.packages_stream
+        if !(package in child1)
+            push!(child1, package)
         end
     end
+
+    return PackagesStream(child1)
 end
 
-# Crossover function: Can be one-point, multi-point, Davis Order Crossover (OX1), uniform, Whole Arithmetic Recombination
-function one_point_crossover(parent1::State, parent2::State)
-    child1 = PackagesStream(parent1.packages_stream)
-    child2 = PackagesStream(parent2.packages_stream)
-
-    crossover_point = rand(1:parent1.size)
-    for i in 1:crossover_point
-        child1.packages[i], child2.packages[i] = child2.packages[i], child1.packages[i]
-    end
-
-    return best_child(child1, child2, parent1, parent2)
-end
-
+# TODO: Fix this
 function multi_point_crossover(parent1::State, parent2::State, num_points::Int)
     child1 = copy(parent1)
     child2 = copy(parent2)
@@ -153,6 +161,7 @@ function multi_point_crossover(parent1::State, parent2::State, num_points::Int)
     return best_child(child1, child2, parent1, parent2)
 end
 
+# TODO: Fix this
 function uniform_crossover(parent1::PackagesStream, parent2::PackagesStream)
     child1 = copy(parent1)
     child2 = copy(parent2)
