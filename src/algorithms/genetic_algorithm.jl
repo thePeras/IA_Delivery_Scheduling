@@ -1,6 +1,7 @@
 using .Models: State, Veichle, Population, PackagesStream
 
 using Random
+using StatsBase
 
 function genetic_algorithm(init_population::Population, max_generations::Int64 = 100, elitism_population_size::Int64 = 20, mutation_rate::Float64 = 0.01)
 
@@ -15,19 +16,20 @@ function genetic_algorithm(init_population::Population, max_generations::Int64 =
         new_population = []
 
         # Elitism - Copying the best individuals to the next generation without any change to help preserve the best solution.
-        sorted_population = sort(population.individuals, by=fitness)
-        reverse!(sorted_population)
-        for j in 1:elitism_population_size
-            push!(new_population, sorted_population[j])
-        end
+        elitism_population = population.individuals
+        sort!(elitism_population, by=fitness, rev=true)
+        # without a for put the best elitism_population_size individuals in the new population 
+        new_population = elitism_population[1:elitism_population_size]
 
         # Reproduction
-        for _ in 1:(population_size - elitism_population_size)
+        for i in 1:(population_size - elitism_population_size)
             # Selection 
             #TODO: Use the choosing algorithm
             parents = tournament_selection(population)
             #parents = roulette_wheel_selection(population)
             #parents = rank_based_selection(population)
+            #println("Parent1: ", parents[1].total_distance)
+            #println("Parent2: ", parents[2].total_distance)
 
             # Crossover 
             #TODO: Use the choosing algorithm
@@ -39,7 +41,7 @@ function genetic_algorithm(init_population::Population, max_generations::Int64 =
                 mutate!(child)
             end
 
-            push!(new_population, State(child.packages, Veichle(0, 0, veichle_vel)))
+            push!(new_population, State(child, Veichle(0, 0, veichle_vel)))
         end
 
         population = Population(new_population)
@@ -68,56 +70,28 @@ function select_random_from_population(population::Population)
 end
 
 function tournament_selection(population::Population, tournament_size::Int = 5)
-    shuffled_population = shuffle(population.individuals)
-    tournament = sample(shuffled_population, tournament_size, replace=false)
-    return sort(tournament, by=fitness, rev=true)[1:2]
+    tournament = sample(population.individuals, tournament_size, replace=false)
+    sort!(tournament, by=fitness, rev=true)
+    return tournament[1:2]
 end
 
-#FIX: This takes a lot
+# This algorithm takes a lot of time to run
 function roulette_wheel_selection(population::Population)
-    total_fitness = abs(sum(fitness(individual) for individual in population.individuals))
-    selected_parents = []
-    for _ in 1:2 
-        r = rand() * total_fitness # Spinning the wheel
-        cumulative_fitness = 0.0
-        for individual in population.individuals
-            if individual in selected_parents
-                continue
-            end
-            cumulative_fitness += abs(fitness(individual))
-            if cumulative_fitness >= r
-                push!(selected_parents, individual)
-                total_fitness -= abs(fitness(individual)) # Update the total fitness because this individual will not considered anymore
-                break
-            end
-        end
-    end
-    return selected_parents
+    fitness_values = abs.([fitness(individual) for individual in population.individuals])
+    total_fitness = sum(fitness_values)
+    probabilities = fitness_values / total_fitness
+    
+    return sample(population.individuals, Weights(probabilities), 2, replace=false)[1:2]
 end
 
-# Fix this 
 function rank_based_selection(population::Population)
-    sorted_population = sort(population.individuals, by=fitness)
-    ranks = reverse(1:length(sorted_population))
-    total_ranks = abs(sum(ranks))
-    probabilities = [abs(r) / total_ranks for r in ranks]
-    selected_parents = []
+    fitness_values = [fitness(individual) for individual in population.individuals]
+    sorted_indices = sortperm(fitness_values)
+    ranks = length(sorted_indices):-1:1
+    total_ranks = sum(abs.(ranks))
+    probabilities = abs.(ranks) / total_ranks
     
-    for _ in 1:2  # Select 2 parents
-        r = rand()
-        cumulative_prob = 0.0
-        for (individual, prob) in zip(sorted_population, probabilities)
-            if individual in selected_parents
-                continue
-            end
-            cumulative_prob += prob
-            if cumulative_prob >= r
-                push!(selected_parents, individual)
-                break
-            end
-        end
-    end
-    return selected_parents
+    return sample(population.individuals, Weights(probabilities), 2, replace=false)[1:2]
 end
 
 #=
@@ -139,15 +113,16 @@ function one_point_crossover(parent1::State, parent2::State)
         end
     end
 
-    return PackagesStream(child1)
+    return child1
 end
 
-# TODO: Fix this
+# TODO: Fix or remove this
 function multi_point_crossover(parent1::State, parent2::State, num_points::Int)
     child1 = copy(parent1)
     child2 = copy(parent2)
 
-    crossover_points = sort(rand(1:parent1.size, num_points))
+    crossover_points = rand(1:parent1.size, num_points)
+    sort!(crossover_points)
     num_segments = num_points + 1
     last_cut = 1
     for i in 1:num_segments
@@ -161,7 +136,7 @@ function multi_point_crossover(parent1::State, parent2::State, num_points::Int)
     return best_child(child1, child2, parent1, parent2)
 end
 
-# TODO: Fix this
+# TODO: Fix or remove this
 function uniform_crossover(parent1::PackagesStream, parent2::PackagesStream)
     child1 = copy(parent1)
     child2 = copy(parent2)
@@ -175,9 +150,8 @@ function uniform_crossover(parent1::PackagesStream, parent2::PackagesStream)
 end
 
 # Mutation function
-function mutate!(individual::PackagesStream)
-    n = length(individual.packages)
-    i, j = rand(1:n), rand(1:n)
-    individual.packages[i], individual.packages[j] = individual.packages[j], individual.packages[i]
+function mutate!(packages::Array{Package, 1})
+    i, j = rand(1:length(packages), 2)
+    packages[i], packages[j] = packages[j], packages[i]
 end
 

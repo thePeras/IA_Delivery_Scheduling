@@ -51,7 +51,7 @@ function main()
 
     # Testing  GA
     init_population = generate_population(50, num_packages, map_size, Veichle(0, 0, velocity))
-    current_state = genetic_algorithm(init_population, 100, 20, 0.2)
+    current_state = genetic_algorithm(init_population, 1000, 20, 0.2)
     # check if exist repeated packages in current_state
     for i in 1:length(current_state.packages_stream)
         for j in 1:length(current_state.packages_stream)
