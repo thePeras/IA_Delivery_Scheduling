@@ -1,5 +1,7 @@
 module Models
 
+import Base: copy, ==
+
 using Distributions
 
 mutable struct Veichle
@@ -60,6 +62,7 @@ mutable struct State
         broken_packages = []
         broken_packages_cost = 0
 
+        # TODO: Instead of moving the veichle, we can calculate the distance between the last package and the current
         for package in packages_stream
             distance = sqrt((veichle.coordinates_x - package.coordinates_x)^2 + (veichle.coordinates_y - package.coordinates_y)^2)
             total_distance += distance
@@ -91,6 +94,8 @@ struct Population
     individuals::Array{State}
 end
 
-Base.copy(obj::Population) = Population(copy(obj.individuals))
+copy(obj::Population) = Population(copy(obj.individuals))
+
+==(p1::Package, p2::Package) = p1.id == p2.id
 
 end

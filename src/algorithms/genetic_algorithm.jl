@@ -3,11 +3,12 @@ using .Models: State, Veichle, Population, PackagesStream
 using Random
 using StatsBase
 
-function genetic_algorithm(init_population::Population, max_generations::Int64 = 100, elitism_population_size::Int64 = 20, mutation_rate::Float64 = 0.01)
+function generate_population(state::State, population_size::Int64)
+    return Population([State(shuffle(state.packages_stream), Veichle(0, 0, state.veichle_velocity)) for _ in 1:population_size])
+end
 
-    veichle_vel = init_population.individuals[1].veichle_velocity
-    population_size = length(init_population.individuals)
-    population = copy(init_population)
+function genetic_algorithm(state::State, population_size::Int64 = 50, max_generations::Int64 = 100, elitism_population_size::Int64 = 20, mutation_rate::Float64 = 0.01)
+    population = generate_population(state, population_size)
 
     for i in 1:max_generations
         println("Generation: ", i)
@@ -28,20 +29,19 @@ function genetic_algorithm(init_population::Population, max_generations::Int64 =
             parents = tournament_selection(population)
             #parents = roulette_wheel_selection(population)
             #parents = rank_based_selection(population)
-            #println("Parent1: ", parents[1].total_distance)
-            #println("Parent2: ", parents[2].total_distance)
 
             # Crossover 
             #TODO: Use the choosing algorithm
             child = one_point_crossover(parents[1], parents[2])
+            #child = multi_point_crossover(parents[1], parents[2], 5)
+            #child = uniform_crossover(parents[1], parents[2])
 
             # Mutation
             if rand(Uniform(0, 1)) < mutation_rate
-                #TODO: Something here is adding packages because when running the alg with mutation the number of packages increases
                 mutate!(child)
             end
 
-            push!(new_population, State(child, Veichle(0, 0, veichle_vel)))
+            push!(new_population, State(child, Veichle(0, 0, state.veichle_velocity)))
         end
 
         population = Population(new_population)
@@ -104,7 +104,8 @@ CROSSOVER FUNCTIONS
 =#
 
 function one_point_crossover(parent1::State, parent2::State)
-    crossover_point = rand(1:length(parent1.packages_stream))
+    stream_size = length(parent1.packages_stream)
+    crossover_point = rand(1:stream_size)
 
     child1 = copy(parent1.packages_stream[1:crossover_point])
     for package in parent2.packages_stream
@@ -116,37 +117,59 @@ function one_point_crossover(parent1::State, parent2::State)
     return child1
 end
 
-# TODO: Fix or remove this
 function multi_point_crossover(parent1::State, parent2::State, num_points::Int)
-    child1 = copy(parent1)
-    child2 = copy(parent2)
-
-    crossover_points = rand(1:parent1.size, num_points)
+    stream_size = length(parent1.packages_stream)
+    crossover_points = rand(1:stream_size, num_points)
     sort!(crossover_points)
-    num_segments = num_points + 1
+
+    child::Array{Union{Package, Missing}, 1} = fill(missing, stream_size)
+    
     last_cut = 1
-    for i in 1:num_segments
+    for i in 1:num_points
         cut_point = crossover_points[i]
-        if i % 2 == 0
-            child1.packages[last_cut:cut_point], child2.packages[last_cut:cut_point] = child2.packages[last_cut:cut_point], child1.packages[last_cut:cut_point]
+        if i % 2 != 0
+            child[last_cut:cut_point] = parent1.packages_stream[last_cut:cut_point]
         end
         last_cut = cut_point + 1
     end
 
-    return best_child(child1, child2, parent1, parent2)
-end
+    child_packages = filter(x -> !ismissing(x), child)
+    resting_packages = filter(x -> x ∉ child_packages, parent2.packages_stream)
 
-# TODO: Fix or remove this
-function uniform_crossover(parent1::PackagesStream, parent2::PackagesStream)
-    child1 = copy(parent1)
-    child2 = copy(parent2)
-    
-    for i in 1:parent1.size
-        if rand() < 0.5
-            child1.packages[i], child2.packages[i] = child2.packages[i], child1.packages[i]
+    for i in 1:stream_size
+        if child[i] === missing
+            child[i] = resting_packages[1]
+            deleteat!(resting_packages, 1)
         end
     end
-    return best_child(child1, child2, parent1, parent2)
+
+    final_child::Array{Package, 1} = [x for x in child if x !== missing]
+    return final_child
+
+end
+
+function uniform_crossover(parent1::State, parent2::State)
+    stream_size = length(parent1.packages_stream)
+    child::Array{Union{Package, Missing}, 1} = fill(missing, stream_size)
+    
+    for i in 1:stream_size
+        if rand() < 0.5
+            child[i] = parent1.packages_stream[i]
+        end
+    end
+
+    chill_packages = filter(x -> !ismissing(x), child)
+    resting_packages = filter(x -> x ∉ chill_packages, parent2.packages_stream)
+
+    for i in 1:stream_size
+        if child[i] === missing
+            child[i] = resting_packages[1]
+            deleteat!(resting_packages, 1)
+        end
+    end
+
+    final_child::Array{Package, 1} = [x for x in child if x !== missing]
+    return final_child
 end
 
 # Mutation function
