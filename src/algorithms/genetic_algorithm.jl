@@ -107,14 +107,14 @@ function one_point_crossover(parent1::State, parent2::State)
     stream_size = length(parent1.packages_stream)
     crossover_point = rand(1:stream_size)
 
-    child1 = copy(parent1.packages_stream[1:crossover_point])
+    child = copy(parent1.packages_stream[1:crossover_point])
     for package in parent2.packages_stream
-        if !(package in child1)
-            push!(child1, package)
+        if !(package in child)
+            push!(child, package)
         end
     end
 
-    return child1
+    return child
 end
 
 function multi_point_crossover(parent1::State, parent2::State, num_points::Int)

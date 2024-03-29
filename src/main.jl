@@ -5,6 +5,7 @@ include("models.jl")
 include("algorithms/hill_climbing.jl")
 include("algorithms/simulated_annealing.jl")
 include("algorithms/genetic_algorithm.jl")
+include("algorithms/tabu_search.jl")
 
 using .Models: State, Package, Veichle, Population
 using .Menu: choose_menu
@@ -35,29 +36,10 @@ end
 function main()
     num_packages = 100
     map_size = 60
-    velocity = 60 # 60 km/h
+    velocity = 60 # km⋅h⁻¹
 
     packages_stream = generate_package_stream(num_packages, map_size)
     state::State = State(packages_stream, Veichle(0, 0, velocity))
-
-    # Testing  GA
-    current_state = genetic_algorithm(state, 100, 1000, 10, 0.1)
-    
-    # print number of packages in current_state
-    print("Number of Packages: ")
-    println(length(current_state.packages_stream))
-    
-    print("GA: ")
-    println(current_state.total_time)
-
-    current_state = hill_climbing(state, 1000)
-    print("Hill Climbing: ")
-    println(current_state.total_time)
-
-    current_state = simulated_annealing(state, max_iterations=1000)
-    print("Simulated Annealing: ")
-    println(current_state.total_time)
-    return
 
     algorithm, iterations = choose_menu()
 
@@ -68,6 +50,8 @@ function main()
     elseif algorithm == "Genetic Algorithm"
         #init_population = generate_population(20)
         #current_state = genetic_algorithm(init_population, iterations)
+    elseif algorithm == "Tabu Search"
+        current_state = tabu(state, iterations)
     end
 
     println(current_state.total_time)
