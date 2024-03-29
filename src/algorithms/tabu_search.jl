@@ -8,7 +8,7 @@ function tabu(state::State, max_iterations::Int64 = 100, max_tabu_size::Int64 = 
     push!(tabu_list, state)
 
     while (current_iteration < max_iterations)
-        neighborhood = get_neighbors(best_candidate)
+        neighborhood = get_neighbors(best_candidate, nNeighbors)
         best_candidate_fitness = -Inf
         
         for candidate in neighborhood
