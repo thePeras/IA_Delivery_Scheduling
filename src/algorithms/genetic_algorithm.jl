@@ -11,7 +11,7 @@ function genetic_algorithm(state::State, population_size::Int64 = 50, max_genera
     population = generate_population(state, population_size)
 
     for i in 1:max_generations
-        println("Generation: ", i)
+        #println("Generation: ", i)
 
         # New Population
         new_population = []
