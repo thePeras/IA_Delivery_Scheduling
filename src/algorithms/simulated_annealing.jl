@@ -12,7 +12,7 @@ function simulated_annealing(initial_state::State; max_iterations=5000, initial_
             new_cost = fitness(next_state)
             old_cost = fitness(current_state)
 
-            delta_energy = new_cost - old_cost
+            delta_energy = -(new_cost- old_cost)
             if delta_energy < 0 || rand() < exp(-delta_energy / current_temperature)
                 current_state = next_state
                 if new_cost > fitness(best_state)

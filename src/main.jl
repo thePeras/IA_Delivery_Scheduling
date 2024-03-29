@@ -39,22 +39,34 @@ function main()
     velocity = 60 # km⋅h⁻¹
 
     packages_stream = generate_package_stream(num_packages, map_size)
-    state::State = State(packages_stream, Veichle(0, 0, velocity))
+    
+    running = true
+    while running
+        state::State = State(packages_stream, Veichle(0, 0, velocity))
+        algorithm, iterations = choose_menu()
 
-    algorithm, iterations = choose_menu()
+        if algorithm == "Hill Climbing"
+            current_state = hill_climbing(state, iterations)
+        elseif algorithm == "Simulated Annealing"
+            current_state = simulated_annealing(state, max_iterations=iterations)
+        elseif algorithm == "Genetic Algorithm"
+            current_state = genetic_algorithm(state, 50, iterations)
+        elseif algorithm == "Tabu Search"
+            current_state = tabu(state, iterations)
+        end
 
-    if algorithm == "Hill Climbing"
-        current_state = hill_climbing(state, iterations)
-    elseif algorithm == "Simulated Annealing"
-        current_state = simulated_annealing(state, max_iterations=iterations)
-    elseif algorithm == "Genetic Algorithm"
-        #init_population = generate_population(20)
-        #current_state = genetic_algorithm(init_population, iterations)
-    elseif algorithm == "Tabu Search"
-        current_state = tabu(state, iterations)
+        #print the order of the packages
+        for package in current_state.packages_stream
+            print(package.id, " ")
+        end
+        println()
+    
+        println(current_state.total_time)
+        println()
+        println()
+
     end
-
-    println(current_state.total_time)
 end
 
 main()
+
