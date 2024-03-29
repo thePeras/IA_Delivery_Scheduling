@@ -1,6 +1,6 @@
 using .Models: State, Package, Veichle
 
-function tabu(state::State, max_iterations::Int64 = 100, max_tabu_size::Int64 = 10)
+function tabu(state::State, max_iterations::Int64 = 100, max_tabu_size::Int64 = 10, nNeighbors::Int64 = 10)
     current_iteration = 0
     best_state = state
     best_candidate = state
