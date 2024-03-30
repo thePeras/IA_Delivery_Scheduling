@@ -1,6 +1,6 @@
 using .Models: State, Package, Veichle
 
-function simulated_annealing(initial_state::State; max_iterations=5000, initial_temperature=100.0, cooling_rate=0.95)
+function simulated_annealing(initial_state::State, max_iterations::Int64=5000, initial_temperature::Float64=100.0, cooling_rate::Float64=0.95)
     current_state = initial_state
     current_temperature = initial_temperature
 

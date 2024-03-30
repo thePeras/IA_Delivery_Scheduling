@@ -20,11 +20,11 @@ module BindTuning
                         "fontFamily"=>"Source Sans Pro, Arial, sans-serif",
                     )    
                 ),
-                dcc_slider(
-                    id="tabu-size",
+                dcc_input(
+                    type="number",
+                    id="tabu_size",
                     min = 10,
                     max = 100,
-                    marks = Dict([i => (i == 1 ? "Label $(i)" : "$(i)") for i = 1:9]),
                     value = 10,
                 ),
                 html_label(
@@ -34,11 +34,11 @@ module BindTuning
                         "fontFamily"=>"Source Sans Pro, Arial, sans-serif",
                     )    
                 ),
-                dcc_slider(
+                dcc_input(
+                    type="number",
                     id="n_neighbors",
                     min = 10,
                     max = 50,
-                    marks = Dict([i => (i == 1 ? "Label $(i)" : "$(i)") for i = 1:5]),
                     value = 10,
                 )
             ],
@@ -70,12 +70,12 @@ module BindTuning
                         "fontFamily"=>"Source Sans Pro, Arial, sans-serif",
                     )    
                 ),
-                dcc_slider(
+                dcc_input(
+                    type="number",
                     id="initial_temperature",
-                    min = -50,
-                    max = 100,
-                    marks = Dict([i => (i == 1 ? "Label $(i)" : "$(i)") for i = 1:9]),
-                    value = 100.0,
+                    min = 0,
+                    max = 100.0,
+                    value = 99.9,
                 ),
                 html_label(
                     "Cooling Rate: ",
@@ -84,11 +84,11 @@ module BindTuning
                         "fontFamily"=>"Source Sans Pro, Arial, sans-serif",
                     )    
                 ),
-                dcc_slider(
+                dcc_input(
+                    type="number",
                     id="cooling_rate",
                     min = 0,
                     max = 1,
-                    marks = Dict([i => (i == 1 ? "Label $(i)" : "$(i)") for i = 1:5]),
                     value = 0.9,
                 )
             ],
@@ -120,26 +120,40 @@ module BindTuning
                         "fontFamily"=>"Source Sans Pro, Arial, sans-serif",
                     )    
                 ),
-                dcc_slider(
+                dcc_input(
+                    type="number",
                     id="n_population",
                     min = 10,
                     max = 150,
-                    marks = Dict([i => (i == 1 ? "Label $(i)" : "$(i)") for i = 1:9]),
                     value = 50,
                 ),
                 html_label(
-                    "Max Generations: ",
+                    "Elitism Population Size: ",
                     style=Dict(
                         "color"=>"#FFFFFF",
                         "fontFamily"=>"Source Sans Pro, Arial, sans-serif",
                     )    
                 ),
-                dcc_slider(
-                    id="max_generations",
-                    min = 20,
-                    max = 200,
-                    marks = Dict([i => (i == 1 ? "Label $(i)" : "$(i)") for i = 1:8]),
-                    value = 100,
+                dcc_input(
+                    type="number",
+                    id="elitism_population_size",
+                    min = 0,
+                    max = 50,
+                    value = 20,
+                ),
+                html_label(
+                    "Mutation Rate: ",
+                    style=Dict(
+                        "color"=>"#FFFFFF",
+                        "fontFamily"=>"Source Sans Pro, Arial, sans-serif",
+                    )    
+                ),
+                dcc_input(
+                    type="number",
+                    id="mutation_rate",
+                    min = 0,
+                    max = 1.0,
+                    value = 0.01,
                 )
             ],
             style=Dict(
