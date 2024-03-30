@@ -12,18 +12,33 @@ cd src
 ```
 
 ## Install dependencies
-Inside the src/ folder enter the Julia REP and install the required packages with the following command:
+Inside the src/ folder enter the Julia REP, install the dependencies and run the program with the following command
 ```bash
-julia --project=. -e 'using Pkg; Pkg.instantiate()'
+julia --project=. -e 'using Pkg; Pkg.instantiate(); include("app.jl")'
+```
+
+## If you have problems with the PlotlyJS package
+Enter the Julia REPL
+```bash
+julia --project=.
+```
+
+Enter the package manager
+```julia
+] 
+```
+and run the following command
+```julia
+build PlotlyJS
 ```
 
 ## Run the program
 ```bash
-
+include("app.jl")
 ```
 
 ## The program
-Our program is a UI web based application that allows you to solve the delivery scheduling problem using different algorithms. The user can select the algorithm to use, the problem instance to solve and the parameters of the algorithm. The program will then show the evolution of the solution and the final solution.
+Our program is a UI web-based application that allows you to solve the delivery scheduling problem using different algorithms. The user can select the algorithm to use, the problem instance to solve and the parameters of the algorithm. The program will then show the evolution of the solution and the final solution.
 
 # About the project
 

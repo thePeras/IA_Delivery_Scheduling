@@ -20,7 +20,7 @@ Each group must submit in Moodle two files:
     - [ ] 6. Implemented algorithms (search algorithms, minimax, metaheuristics)
     - [ ] 7. Experimental results, using appropriate tables/plots and comparing the various methods, heuristics, algorithms and respective parameterizations for different scenarios/problems.
     - [ ] 8. Conclusions slide
-    - [ ] 9. A slide referencing consulted and used materials (software, websites, scientific articles, ...).
+    - [X] 9. A slide referencing consulted and used materials (software, websites, scientific articles, ...).
 - [ ] 10. The implemented **code**
     - Properly commented
     - Including a “readme” file with instructions on how to compile, run, and use the program. 
