@@ -1,0 +1,17 @@
+name = "YourProjectName"
+uuid = "12345678-1234-1234-1234-123456789abc"
+authors = [
+    "Your Name <your.email@example.com>",
+    "Your Name <your.email@example.com>",
+    "Your Name <your.email@example.com>",
+]
+version = "1.0.0"
+
+[deps]
+# Add your dependencies here, for example:
+# ExamplePackage = "12345678-1234-1234-1234-123456789abc"
+
+[compat]
+julia = "1.5"
+# Add compatibility requirements for your dependencies here, for example:
+# ExamplePackage = "1.2, 1.3"
