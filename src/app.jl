@@ -37,31 +37,6 @@ function fitness(state::State)
     return - (distance_cost + state.broken_packages_cost + urgent_cost)
 end
 
-# ====================================
-#             Variables
-# global num_packages = 1000
-# global map_size = 60
-# global velocity = 60
-# global tabu_size = 10
-# global n_neighbors = 10
-# global initial_temperature = 100.0 
-# global cooling_rate = 0.95
-# global n_population = 50
-# global max_generations = 100 
-
-# global packages_stream = generate_package_stream(num_packages, map_size)
-# global initial_state = State(packages_stream, Veichle(0, 0, velocity))
-
-# global current_index = 1
-
-# global xs = [100,500,1000,2500,5000,10000]
-
-# global tabu_search_y = []
-# global simulated_annealing_y = []
-# global hill_climbing_y = []
-# global genetic_algorithm_y = []
-# ====================================
-
 app = dash()
 
 app.layout = html_div() do
