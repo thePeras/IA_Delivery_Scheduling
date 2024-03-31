@@ -24,7 +24,7 @@ function tabu_bt()
                         id="tabu_size",
                         min=10,
                         max=100,
-                        value=10,
+                        value=15,
                     ),
                 ]
             ),
@@ -37,8 +37,8 @@ function tabu_bt()
                         type="number",
                         id="n_neighbors",
                         min=10,
-                        max=50,
-                        value=10,
+                        max=100,
+                        value=30,
                     )
                 ]
             )
@@ -70,7 +70,7 @@ function simulated_annealing_bt()
                         type="number",
                         id="initial_temperature",
                         min=0,
-                        max=100,
+                        max=500,
                         value=100,
                         step=0.5,
                     ),
@@ -119,8 +119,8 @@ function genetic_algorithm_bt()
                         type="number",
                         id="n_population",
                         min=10,
-                        max=150,
-                        value=50,
+                        max=500,
+                        value=150,
                     ),
                 ]
             ),
@@ -133,7 +133,7 @@ function genetic_algorithm_bt()
                         type="number",
                         id="elitism_population_size",
                         min=0,
-                        max=50,
+                        max=500,
                         value=10,
                     ),
                 ]
@@ -206,7 +206,7 @@ function genetic_algorithm_bt()
                         type="number",
                         id="num_crossover_points",
                         min=0,
-                        max=10,
+                        max=1000,
                         value=5,
                     )
                 ]

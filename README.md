@@ -16,6 +16,7 @@ Inside the src/ folder enter the Julia REP, install the dependencies and run the
 ```bash
 julia --project=. -e 'using Pkg; Pkg.instantiate(); include("app.jl")'
 ```
+This will open a local server you can access in your browser at http://localhost:8000. The port may be different, check the output of the command.
 
 ## If you have problems with the PlotlyJS package
 Enter the Julia REPL

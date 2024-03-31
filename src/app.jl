@@ -84,7 +84,7 @@ app.layout = html_div() do
                                 type="number",
                                 min = 20,
                                 max = 200,
-                                value = 60,
+                                value = 50,
                             )
                         ]
                     ),
