@@ -7,7 +7,7 @@ function generate_population(state::State, population_size::Int64)
     return Population([State(shuffle(state.packages_stream), Veichle(0, 0, state.veichle_velocity)) for _ in 1:population_size])
 end
 
-function genetic_algorithm(state::State, population_size::Int64 = 50, max_generations::Int64 = 100, elitism_population_size::Int64 = 20, mutation_rate::Float64 = 0.01)
+function genetic_algorithm(state::State, population_size::Int64 = 50, max_generations::Int64 = 100, elitism_population_size::Int64 = 20, mutation_rate::Float64 = 0.01, selection_function::String = "tournament", crossover_function::String = "one_point", num_crossover_points::Int64 = 5)
     population = generate_population(state, population_size)
 
     for i in 1:max_generations
@@ -25,16 +25,24 @@ function genetic_algorithm(state::State, population_size::Int64 = 50, max_genera
         # Reproduction
         for i in 1:(population_size - elitism_population_size)
             # Selection 
-            #TODO: Use the choosing algorithm
-            parents = tournament_selection(population)
-            #parents = roulette_wheel_selection(population)
-            #parents = rank_based_selection(population)
+            parents = []
+            if selection_function == "tournament"
+                parents = tournament_selection(population)
+            elseif selection_function == "roulette_wheel"
+                parents = roulette_wheel_selection(population)
+            elseif selection_function == "rank_based"
+                parents = rank_based_selection(population)
+            end
 
             # Crossover 
-            #TODO: Use the choosing algorithm
-            child = one_point_crossover(parents[1], parents[2])
-            #child = multi_point_crossover(parents[1], parents[2], 5)
-            #child = uniform_crossover(parents[1], parents[2])
+            child = []
+            if crossover_function == "one_point"
+                child = one_point_crossover(parents[1], parents[2])
+            elseif crossover_function == "multi_point"
+                child = multi_point_crossover(parents[1], parents[2], num_crossover_points)
+            elseif crossover_function == "uniform"
+                child = uniform_crossover(parents[1], parents[2])
+            end
 
             # Mutation
             if rand(Uniform(0, 1)) < mutation_rate
@@ -64,11 +72,6 @@ generation with the elistm selection.
 
 =#
 
-# Two random parents
-function select_random_from_population(population::Population)
-    return sample(population.individuals, 2, replace=false)
-end
-
 function tournament_selection(population::Population, tournament_size::Int = 5)
     tournament = sample(population.individuals, tournament_size, replace=false)
     sort!(tournament, by=fitness, rev=true)
@@ -77,7 +80,7 @@ end
 
 # This algorithm takes a lot of time to run
 function roulette_wheel_selection(population::Population)
-    fitness_values = abs.([fitness(individual) for individual in population.individuals])
+    fitness_values = ([fitness(individual) for individual in population.individuals])
     total_fitness = sum(fitness_values)
     probabilities = fitness_values / total_fitness
     
@@ -88,8 +91,8 @@ function rank_based_selection(population::Population)
     fitness_values = [fitness(individual) for individual in population.individuals]
     sorted_indices = sortperm(fitness_values)
     ranks = length(sorted_indices):-1:1
-    total_ranks = sum(abs.(ranks))
-    probabilities = abs.(ranks) / total_ranks
+    total_ranks = sum(ranks)
+    probabilities = ranks / total_ranks
     
     return sample(population.individuals, Weights(probabilities), 2, replace=false)[1:2]
 end

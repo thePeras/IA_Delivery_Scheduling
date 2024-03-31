@@ -23,7 +23,7 @@ Enter the Julia REPL
 julia --project=.
 ```
 
-Enter the package manager
+Then enter the package manager
 ```julia
 ] 
 ```
