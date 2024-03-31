@@ -222,7 +222,7 @@ callback!(
     simulated_annealing_data = simulated_annealing(initial_state, Int64(num_iterations), Float64(initial_temperature), Float64(cooling_rate))
     genetic_algorithm_data = genetic_algorithm(initial_state, Int64(n_population), Int64(num_iterations), Int64(elitism_population_size), Float64(mutation_rate))
 
-    return
+    return [
         [
             dcc_graph(
                 figure=(
@@ -236,6 +236,7 @@ callback!(
             )
         ], 
         0
+    ]
 end
 
 run_server(app, "0.0.0.0", 8100, debug=true)

@@ -84,8 +84,8 @@ module BindTuning
                             type="number",
                             id="initial_temperature",
                             min = 0,
-                            max = 100.0,
-                            value = 99.9,
+                            max = 100,
+                            value = 100,
                             step=0.5,
                         ),
                     ]
