@@ -62,7 +62,7 @@ mutable struct State
         broken_packages = []
         broken_packages_cost = 0
 
-        # TODO: Instead of moving the veichle, we can calculate the distance between the last package and the current
+        # IMPROVEMENT: Instead of moving the veichle, we can calculate the distance between the last package and the current
         for package in packages_stream
             distance = sqrt((veichle.coordinates_x - package.coordinates_x)^2 + (veichle.coordinates_y - package.coordinates_y)^2)
             total_distance += distance

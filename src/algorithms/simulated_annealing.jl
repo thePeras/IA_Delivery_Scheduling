@@ -1,5 +1,14 @@
 using .Models: State, Package, Veichle
 
+#=
+    Simulated Annealing algorithm to solve the Delivery Schedule Optimization Problem.
+    - initial_state: Initial state of the problem
+    - max_iterations: Maximum number of iterations to run the algorithm
+    - initial_temperature: Initial temperature of the system
+    - cooling_rate: Rate at which the temperature is reduced
+
+    Returns the best state found by the Simulated Annealing algorithm.
+=#
 function simulated_annealing(initial_state::State, max_iterations::Int64=5000, initial_temperature::Float64=100.0, cooling_rate::Float64=0.95)
     current_state = initial_state
     current_temperature = initial_temperature

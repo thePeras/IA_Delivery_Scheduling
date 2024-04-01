@@ -1,5 +1,14 @@
 using .Models: State, Package, Veichle
 
+#=
+    Tabu Search algorithm to solve the Delivery Schedule Optimization Problem.
+    - state: Initial state of the problem
+    - max_iterations: Maximum number of iterations to run the algorithm
+    - max_tabu_size: Maximum number of states to store in the tabu list
+    - nNeighbors: Number of neighbors to generate in each iteration
+
+    Returns the best state found by the Tabu Search algorithm.
+=#
 function tabu(state::State, max_iterations::Int64 = 100, max_tabu_size::Int64 = 10, nNeighbors::Int64 = 10)
     current_iteration = 0
     best_state = state
@@ -69,32 +78,3 @@ function generate_random_pairs(max, n)
     
     return pairs
 end
-
-# Tabu search pseudocode
-
-# sBest ← s0
-# bestCandidate ← s0
-# tabuList ← []
-# tabuList.push(s0)
-# while (not stoppingCondition())
-#     sNeighborhood ← getNeighbors(bestCandidate)
-#     bestCandidateFitness ← -∞
-#     for (sCandidate in sNeighborhood)
-#         if ( (not tabuList.contains(sCandidate)) 
-#             and (fitness(sCandidate) > bestCandidateFitness) )
-#             bestCandidate ← sCandidate
-#             bestCandidateFitness ← fitness(bestCandidate)
-#         end
-#     end
-#     if (bestCandidateFitness is -∞)
-#         break;
-#     end
-#     if (bestCandidateFitness > fitness(sBest))
-#         sBest ← bestCandidate
-#     end
-#     tabuList.push(bestCandidate)
-#     if (tabuList.size > maxTabuSize)
-#         tabuList.removeFirst()
-#     end
-# end
-# return sBest

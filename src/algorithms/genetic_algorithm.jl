@@ -3,10 +3,26 @@ using .Models: State, Veichle, Population, PackagesStream
 using Random
 using StatsBase
 
+#=
+    Based on the given state package, generate a population of states with random order of packages.
+=#
 function generate_population(state::State, population_size::Int64)
     return Population([State(shuffle(state.packages_stream), Veichle(0, 0, state.veichle_velocity)) for _ in 1:population_size])
 end
 
+#=
+    Genetic Algorithm
+    - state: Initial state of the problem
+    - population_size: Number of individuals in the population
+    - max_generations: Number of generations
+    - elitism_population_size: Number of individuals that will be copied to the next generation without any change
+    - mutation_rate: Probability of a mutation happening
+    - selection_function: Selection function to be used
+    - crossover_function: Crossover function to be used
+    - num_crossover_points: Number of crossover points to be used in the multi-point crossover
+
+    Returns the best individual found by the genetic algorithm.
+=#
 function genetic_algorithm(state::State, population_size::Int64 = 50, max_generations::Int64 = 100, elitism_population_size::Int64 = 20, mutation_rate::Float64 = 0.01, selection_function::String = "tournament", crossover_function::String = "one_point", num_crossover_points::Int64 = 5)
     population = generate_population(state, population_size)
 
@@ -59,16 +75,15 @@ function genetic_algorithm(state::State, population_size::Int64 = 50, max_genera
 end
 
 #=
+    SELECTION FUNCTIONS
+    - Tournament selection
+    - Roulette wheel selection
+    - Rank-based selection
 
-SELECTION FUNCTIONS
-- Tournament selection
-- Roulette wheel selection
-- Rank-based selection
-
-Our selection functions returns two diference parents. 
-This is an optimization step since we want diversity and 
-the best individuals were already copied to the next 
-generation with the elistm selection.
+    Our selection functions returns two diference parents. 
+    This is an optimization step since we want diversity and 
+    the best individuals were already copied to the next 
+    generation with the elistm selection.
 
 =#
 
@@ -98,12 +113,10 @@ function rank_based_selection(population::Population)
 end
 
 #=
-
-CROSSOVER FUNCTIONS
-- One-point crossover
-- Multi-point crossover
-- Uniform crossover
-
+    CROSSOVER FUNCTIONS
+    - One-point crossover
+    - Multi-point crossover
+    - Uniform crossover
 =#
 
 function one_point_crossover(parent1::State, parent2::State)

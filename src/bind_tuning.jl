@@ -1,3 +1,10 @@
+#=
+    This module defines the layout of the components used in the Dash app for change the parameters of the three algorithms:
+        - Tabu Search
+        - Simulated Annealing
+        - Genetic Algorithm
+=#
+
 module BindTuning
 
 using Dash
