@@ -14,6 +14,9 @@
 ><br/>
 > Project evaluation: **20**/20
 
+# Project Goals
+Implement and compare different algorithms for solving the delivery scheduling problem, where packages of three types must be transported from a starting point to various delivery locations. Each package type incurs different costs and penalties during transportation. The goal is to design a meta-heuristic algorithm to optimize the delivery order of packages, considering some criteria.
+
 # Requirements to run
 
 ## Install Julia
@@ -59,19 +62,11 @@ This is a UI web-based application that allows you to solve the delivery schedul
 
 # About the project
 
-## Metaheuristics for Optimization/Decision Problems
-
-An optimization problem is characterized by the existence of a (typically large) set of possible solutions, comparable to each other, of which one or more are considered (globally) optimal solutions. 
-Depending on the specific problem, an **evaluation function** allows you to establish this comparison between solutions. In many of these problems, it is virtually impossible to find the optimal solution or to ensure that the solution found is optimal, and, as such, the **goal is to try to find a locally optimal** solution that maximizes/minimizes a given evaluation function to the extent possible. 
-
-In this work were implemented and compared different algorithms for solving optimization problems, such as:
+## Used Metaheuristics
 - Hill-climbing
 - Simulated annealing
 - Tabu search
 - Genetic algorithms
-
-## Problem to be solved: Delivery Scheduling
-Delivery scenario where packages of three types must be transported from a starting point (0, 0) to various delivery locations. Each package type incurs different costs and penalties during transportation.
 
 ### Packages types
 1. Fragile packages: Have a chance of damage during transportation.

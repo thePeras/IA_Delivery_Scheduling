@@ -94,6 +94,7 @@ struct Population
     individuals::Array{State}
 end
 
+
 copy(obj::Population) = Population(copy(obj.individuals))
 
 ==(p1::Package, p2::Package) = p1.id == p2.id
